@@ -5,7 +5,7 @@ FROM node:14
 WORKDIR /app
 
 # Install dependencies
-RUN npm install express sqlite3
+RUN npm install express sqlite3 cors
 
 # Copy only the server.js file into the container
 COPY src/server.js /app

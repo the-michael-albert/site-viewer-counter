@@ -1,8 +1,11 @@
 const express = require('express');
+const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const port = 3000;
+
+app.use(cors({ credentials: false }));
 
 // Create SQLite database and table if not exists
 const db = new sqlite3.Database('visitors.db', (err) => {
