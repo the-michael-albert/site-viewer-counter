@@ -18,12 +18,34 @@ const db = new sqlite3.Database('visitors.db', (err) => {
         count INTEGER DEFAULT 0
       )
     `);
+    db.run(`
+      CREATE TABLE IF NOT EXISTS ip_addresses (
+        id INTEGER PRIMARY KEY,
+        ip_address TEXT NOT NULL
+      )
+    `);
   }
 });
 
 // Middleware to log requests
 app.use((req, res, next) => {
-  console.log(`Received request: ${req.method} ${req.url}`);
+  const ipAddress = req.ip || req.connection.remoteAddress;
+
+  // Log the request
+  console.log(`Received request: ${req.method} ${req.url} from IP: ${ipAddress}`);
+
+  // Store IP address in the database
+  db.run(`
+    INSERT INTO ip_addresses (ip_address)
+    VALUES (?)
+  `, [ipAddress], (err) => {
+    if (err) {
+      console.error(err.message);
+      // Handle the error if needed
+    }
+  });
+
+  // Continue with the next middleware/route handler
   next();
 });
 
